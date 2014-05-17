@@ -28,7 +28,7 @@ public class LeftAndRightActivity extends BaseActivity {
 
 
        getSlidingMenu().setMenu(R.layout.menu_frame_three);
-        getSlidingMenu().setShadowDrawable(R.drawable.shadowright);
+        getSlidingMenu().setShadowDrawable(R.drawable.shadowleft);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.menu_frame_three, new MapYellowFragment())

@@ -23,7 +23,7 @@ public class LeftAndRightActivity extends BaseActivity {
         setContentView(R.layout.content_frame);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_frame, new SampleListFragment())
+                .replace(R.id.content_frame, new MainSparqlQuery())
                 .commit();
 
 

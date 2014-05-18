@@ -238,12 +238,12 @@ public class DeputyActivity extends Activity {
 
             // select single ListView item
             lv.setAdapter(adapter);
-/*
+
             for ( HashMap<String,String> uriMap : jsonlist) {
                    String uri = uriMap.get("attoValue");
                    new ActTask(activity).execute(uri);
 
-            }*/
+            }
         }
 
         protected Boolean doInBackground(final String... args) {
@@ -260,6 +260,7 @@ public class DeputyActivity extends Activity {
             String atto_sql_01 = "select distinct * where { OPTIONAL {?atto ocd:primo_firmatario ";
             String atto_sql_02 = " . ?atto a ocd:atto.} OPTIONAL {?atto ocd:altro_firmatario ";
             String atto_sql_03 = " . ?atto a ocd:atto.} }";
+
 
             String eeee = url_pre + atto_sql_01 + nomedeputato + atto_sql_02 + nomedeputato + atto_sql_03 + url_pos;
             String urlstring = null;
@@ -352,27 +353,22 @@ public class DeputyActivity extends Activity {
             JSONParser jParser = new JSONParser();
             // get JSON data from URL
             JSONObject json = null;
-            nomedeputato = "<" + getIntent().getExtras().getString("id") + ">";
+            nomedeputato =  getIntent().getExtras().getString("id");
             String identifier = args[0];
 
+            String query = "select distinct * where { OPTIONAL {?atto ocd:primo_firmatario ?deputato. ?atto a ocd:atto.} OPTIONAL {?atto ocd:altro_firmatario ?deputato . ?atto a ocd:atto.} ?atto dc:title ?nomeAtto}";
 
-             String query =    " select distinct * where { "
-                + "<" + identifier + "> a ocd:legge."
-                + "<" + identifier + "> dc:title ?nomeAtto."
-                + "?legge a ocd:atto; ocd:rif_leg <" + identifier + ">."
-                + "?legge ocd:lavoriPreparatori [?lavoro <"+ identifier + ">]}";
-
-
+            String rquery = query.replace("?deputato","<"+nomedeputato+">");
 
             String urlstring = null;
             try {
-                urlstring = URLEncoder.encode(query, "utf-8");
-                String eee = url_pre + query + url_pos;
+                urlstring = URLEncoder.encode(rquery, "utf-8");
+                String eee = url_pre + rquery + url_pos;
                 Log.i("AAA", eee);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            json = jParser.getJSONFromUrl(url_pre + query + url_pos);
+            json = jParser.getJSONFromUrl(url_pre + urlstring + url_pos);
 
 
             try {
@@ -386,7 +382,7 @@ public class DeputyActivity extends Activity {
 
                     try {
 
-                        JSONObject atto = bindings.getJSONObject(i).getJSONObject("atto");
+                        JSONObject atto = bindings.getJSONObject(i).getJSONObject("nomeAtto");
 
 
                         String attovalue = atto.getString("value");

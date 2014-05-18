@@ -33,8 +33,8 @@ public class ItalianInteractiveMap extends Fragment implements View.OnTouchListe
     @Override
     public void onResume() {
         // TODO Auto-generated method stub
-        hiddenMapImageView = (ImageView)this.getView().findViewById(R.id.interactiveMapHiddenImageView);
-        visibleMapImageView = (ImageView)this.getView().findViewById(R.id.interactiveMapVisibleImageView);
+      //  hiddenMapImageView = (ImageView)this.getView().findViewById(R.id.interactiveMapHiddenImageView);
+      //  visibleMapImageView = (ImageView)this.getView().findViewById(R.id.interactiveMapVisibleImageView);
         hiddenMapImageView.setOnTouchListener(this);
 
         super.onResume();
@@ -95,6 +95,9 @@ public class ItalianInteractiveMap extends Fragment implements View.OnTouchListe
     public void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+
+
+
     }
 
     /* (non-Javadoc)
@@ -103,7 +106,7 @@ public class ItalianInteractiveMap extends Fragment implements View.OnTouchListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.interactive_map_fragment, container, false);
+        View view = inflater.inflate(R.layout.mapyellowfragment, container, false);
 
         return view;
     }

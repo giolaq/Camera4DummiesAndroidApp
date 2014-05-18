@@ -27,7 +27,7 @@ public class LeftAndRightActivity extends BaseActivity {
                 .commit();
 
 
-       getSlidingMenu().setMenu(R.layout.menu_frame_three);
+      getSlidingMenu().setMenu(R.layout.menu_frame_three);
         getSlidingMenu().setShadowDrawable(R.drawable.shadowleft);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -36,6 +36,14 @@ public class LeftAndRightActivity extends BaseActivity {
 
 
 
+
+      /*  getSlidingMenu().setMenu(R.layout.interactive_map_fragment);
+        getSlidingMenu().setShadowDrawable(R.drawable.shadowleft);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.interactiveMapFragment, new ItalianInteractiveMap())
+                .commit();*/
+
         getSlidingMenu().setSecondaryMenu(R.layout.menu_frame);
         getSlidingMenu().setSecondaryShadowDrawable(R.drawable.shadowright);
         getSupportFragmentManager()
@@ -43,15 +51,9 @@ public class LeftAndRightActivity extends BaseActivity {
                 .replace(R.id.menu_frame, new MapFragment())
                 .commit();
 
-        /*
-          getSlidingMenu().setMenu(R.layout.interactive_map_fragment);
-        getSlidingMenu().setShadowDrawable(R.drawable.shadowleft);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.interactiveMapFragment, new ItalianInteractiveMap())
-                .commit();
 
-         */
+
+
 
     }
 

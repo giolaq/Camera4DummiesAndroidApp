@@ -2,33 +2,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DeputyActivity" >
+    tools:context=".DeputyActivity">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
+        sothree:dragView="@+id/name"
         sothree:panelHeight="68dp"
-        sothree:shadowHeight="4dp"
         sothree:paralaxOffset="100dp"
-        sothree:dragView="@+id/name">
+        sothree:shadowHeight="4dp">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
             android:paddingTop="?android:attr/actionBarSize"
-            android:layout_gravity="center">
+            >
+
+
             <ImageView
-                android:gravity="center_horizontal"
                 android:id="@+id/pic"
+                android:layout_centerHorizontal="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:scaleType="fitStart"
-                >
-            </ImageView>
+                android:scaleType="fitStart"></ImageView>
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleLarge"
@@ -41,14 +41,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#eeeeee"
-            android:orientation="vertical"
             android:clickable="true"
-            android:focusable="false">
+            android:focusable="false"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="68dp"
+                android:background="@drawable/ac_background"
                 android:orientation="horizontal">
 
                 <TextView
@@ -56,30 +56,30 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:textSize="14sp"
                     android:gravity="center_vertical"
-                    android:paddingLeft="10dp"/>
+                    android:paddingLeft="10dp"
+                    android:textSize="23sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <ImageButton
                     android:id="@+id/follow"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:textSize="14sp"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"
                     android:paddingLeft="10dp"
-                    android:scaleType="fitCenter" />
+                    android:paddingRight="10dp"
+                    android:scaleType="fitCenter"
+                    android:textSize="14sp" />
 
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:scaleType="fitStart"
-                android:src="@drawable/logo_camera_deputati">
-            </ImageView>
+
+            <ListView
+                android:id="@+id/actList"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"></ListView>
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 

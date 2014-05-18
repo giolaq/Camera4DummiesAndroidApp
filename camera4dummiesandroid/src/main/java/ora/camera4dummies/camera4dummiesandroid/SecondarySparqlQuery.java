@@ -88,7 +88,7 @@ public class SecondarySparqlQuery extends ListActivity {
             }
             ListAdapter adapter = new SimpleAdapter(context, jsonlist,
                     R.layout.list_item_second, new String[]{"collegioValue", "countValue"}, new int[]{
-                    R.id.vehicleType, R.id.vehicleColor}
+                    R.id.vehicleColor, R.id.vehicleType }
             );
 
             setListAdapter(adapter);
@@ -108,8 +108,11 @@ public class SecondarySparqlQuery extends ListActivity {
             String sql_pre = "select distinct ?deputato ?nome ?cognome ?img ?categoryY ?categoryX where { ?deputato a ocd:deputato; foaf:firstName ?nome; foaf:surname ?cognome; foaf:gender ?categoryY ; foaf:depiction ?img; ocd:rif_leg <http://dati.camera.it/ocd/legislatura.rdf/repubblica_17>; ocd:rif_mandatoCamera ?mandato . ?mandato ocd:rif_elezione ?elezione . ?elezione dc:coverage \"";
             String sql_pos = "\" FILTER NOT EXISTS{ ?mandato ocd:endDate ?date } ?deputato ocd:aderisce ?aderisce . ?aderisce ocd:rif_gruppoParlamentare ?gruppo . ?gruppo <http://purl.org/dc/terms/alternative> ?categoryX . MINUS{?aderisce ocd:endDate ?fineAdesione} }";
 
+            String eeee = url_pre + sql_pre + collegio + sql_pos + url_pos;
             String urlstring = null;
             try {
+
+
                 urlstring = URLEncoder.encode(sql_pre + collegio + sql_pos, "utf-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -131,11 +134,13 @@ public class SecondarySparqlQuery extends ListActivity {
                         JSONObject collegio = bindings.getJSONObject(i).getJSONObject("nome");
                         JSONObject count = bindings.getJSONObject(i).getJSONObject("cognome");
                         JSONObject img = bindings.getJSONObject(i).getJSONObject("img");
+                        JSONObject id = bindings.getJSONObject(i).getJSONObject("deputato");
 
 
                         String collegioValue = collegio.getString("value");
                         String countValue = count.getString("value");
                         String imgurl = img.getString("value");
+                        String idurl = id.getString("value");
 
                         HashMap<String, String> map = new HashMap<String, String>();
 
@@ -143,6 +148,7 @@ public class SecondarySparqlQuery extends ListActivity {
                         map.put("collegioValue", collegioValue);
                         map.put("countValue", countValue);
                         map.put("img", imgurl);
+                        map.put("id", idurl);
 
                         jsonlist.add(map);
                     } catch (JSONException e) {
@@ -163,6 +169,7 @@ public class SecondarySparqlQuery extends ListActivity {
         String selectedFromList = ((HashMap<String, String>) lv.getItemAtPosition(position)).get("img");
         String name =  ((HashMap<String, String>) lv.getItemAtPosition(position)).get("collegioValue");
         String surname =  ((HashMap<String, String>) lv.getItemAtPosition(position)).get("countValue");
+        String idr =  ((HashMap<String, String>) lv.getItemAtPosition(position)).get("id");
 
         Intent intent = new Intent(this, DeputyActivity.class);
        /* intent.setAction(android.content.Intent.ACTION_VIEW);
@@ -171,6 +178,7 @@ public class SecondarySparqlQuery extends ListActivity {
         intent.putExtra("img", selectedFromList);
         intent.putExtra("name", name);
         intent.putExtra("surname", surname);
+        intent.putExtra("id", idr);
 
         startActivity(intent);
     }

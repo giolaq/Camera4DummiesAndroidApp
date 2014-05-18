@@ -3,19 +3,4 @@
     android:id="@+id/interactiveMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
- >
-	
-     <ImageView
-        android:id="@+id/interactiveMapHiddenImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/mappa_italia_coloured_hidden" 
-        android:alpha="0"/>
-    
-    <ImageView
-        android:id="@+id/interactiveMapVisibleImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/mappa_italia" />
-
-</FrameLayout>
+ />

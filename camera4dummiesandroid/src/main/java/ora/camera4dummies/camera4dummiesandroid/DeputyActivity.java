@@ -5,6 +5,8 @@ package ora.camera4dummies.camera4dummiesandroid;
  */
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -12,28 +14,50 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DeputyActivity extends Activity {
     private static final String TAG = "DeputyActivity";
+
+    private static String url_pre = "http://dati.camera.it/sparql?default-graph-uri=&query=";
+    private static String url_pos = "&format=application%2Fjson&timeout=0&debug=on&callback=JSON_CALLBACK";
 
     public static final String SAVED_STATE_ACTION_BAR_HIDDEN = "saved_state_action_bar_hidden";
 
     private SlidingUpPanelLayout mLayout;
 
     private ProgressBar pd;
+
+    private String nomedeputato;
+
+    ArrayList<HashMap<String, String>> jsonlist = new ArrayList<HashMap<String, String>>();
+
+    private ListView lv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +112,16 @@ public class DeputyActivity extends Activity {
             int actionBarHeight = getActionBarHeight();
             setActionBarTranslation(-actionBarHeight);//will "hide" an ActionBar
         }
+
+
+        lv = (ListView) findViewById(R.id.actList);
+
+        LayoutInflater inflater = getLayoutInflater();
+        View header = inflater.inflate(R.layout.header, null, false);
+
+        lv.addHeaderView(header);
+        new ProgressTask(this).execute();
+
     }
 
     @Override
@@ -164,6 +198,215 @@ public class DeputyActivity extends Activity {
             super.onPostExecute(result);
             pd.setVisibility(View.GONE);
             bmImage.setImageBitmap(result);
+        }
+
+
+    }
+
+
+    private class ProgressTask extends AsyncTask<String, Void, Boolean> {
+        private ProgressDialog dialog;
+
+        private Activity activity;
+
+        // private List<Message> messages;
+        public ProgressTask(Activity activity) {
+            this.activity = activity;
+            context = activity;
+            dialog = new ProgressDialog(context);
+        }
+
+
+        private Context context;
+
+        protected void onPreExecute() {
+            this.dialog.setMessage("Loading data");
+            this.dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+            ListAdapter adapter = new SimpleAdapter(context, jsonlist,
+                    R.layout.list_item_second, new String[]{"attoValue"}, new int[]{
+                    R.id.vehicleType}
+            );
+
+
+
+            // select single ListView item
+            lv.setAdapter(adapter);
+/*
+            for ( HashMap<String,String> uriMap : jsonlist) {
+                   String uri = uriMap.get("attoValue");
+                   new ActTask(activity).execute(uri);
+
+            }*/
+        }
+
+        protected Boolean doInBackground(final String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // get JSON data from URL
+            JSONObject json = null;
+            nomedeputato = "<" + getIntent().getExtras().getString("id") + ">";
+
+
+            String sql_pre = "select distinct ?deputato ?nome ?cognome ?img ?categoryY ?categoryX where { ?deputato a ocd:deputato; foaf:firstName ?nome; foaf:surname ?cognome; foaf:gender ?categoryY ; foaf:depiction ?img; ocd:rif_leg <http://dati.camera.it/ocd/legislatura.rdf/repubblica_17>; ocd:rif_mandatoCamera ?mandato . ?mandato ocd:rif_elezione ?elezione . ?elezione dc:coverage \"";
+            String sql_pos = "\" FILTER NOT EXISTS{ ?mandato ocd:endDate ?date } ?deputato ocd:aderisce ?aderisce . ?aderisce ocd:rif_gruppoParlamentare ?gruppo . ?gruppo <http://purl.org/dc/terms/alternative> ?categoryX . MINUS{?aderisce ocd:endDate ?fineAdesione} }";
+
+            String atto_sql_01 = "select distinct * where { OPTIONAL {?atto ocd:primo_firmatario ";
+            String atto_sql_02 = " . ?atto a ocd:atto.} OPTIONAL {?atto ocd:altro_firmatario ";
+            String atto_sql_03 = " . ?atto a ocd:atto.} }";
+
+            String eeee = url_pre + atto_sql_01 + nomedeputato + atto_sql_02 + nomedeputato + atto_sql_03 + url_pos;
+            String urlstring = null;
+            try {
+                urlstring = URLEncoder.encode(atto_sql_01 + nomedeputato + atto_sql_02 + nomedeputato + atto_sql_03, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            json = jParser.getJSONFromUrl(url_pre + urlstring + url_pos);
+
+
+            try {
+
+
+                JSONObject result = json.getJSONObject("results");
+
+                JSONArray bindings = result.getJSONArray("bindings");
+
+                for (int i = 0; i < bindings.length(); i++) {
+
+                    try {
+
+                        JSONObject atto = bindings.getJSONObject(i).getJSONObject("atto");
+
+
+                        String attovalue = atto.getString("value");
+                        HashMap<String,String> map = new HashMap<String, String>();
+
+                        // Add child node to HashMap key & value
+                        map.put("attoValue", attovalue);
+
+                        jsonlist.add(map);
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+    }
+
+
+
+
+    private class ActTask extends AsyncTask<String, String, Boolean> {
+        private ProgressDialog dialog;
+
+        private Activity activity;
+
+        // private List<Message> messages;
+        public ActTask(Activity activity) {
+            this.activity = activity;
+            context = activity;
+            dialog = new ProgressDialog(context);
+        }
+
+
+        private Context context;
+
+        protected void onPreExecute() {
+            this.dialog.setMessage("Loading data");
+            this.dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+            ListAdapter adapter = new SimpleAdapter(context, jsonlist,
+                    R.layout.list_item_second, new String[]{"attoValue"}, new int[]{
+                    R.id.vehicleType}
+            );
+
+
+
+            // select single ListView item
+            lv.setAdapter(adapter);
+        }
+
+        protected Boolean doInBackground(final String... args) {
+
+            JSONParser jParser = new JSONParser();
+            // get JSON data from URL
+            JSONObject json = null;
+            nomedeputato = "<" + getIntent().getExtras().getString("id") + ">";
+            String identifier = args[0];
+
+
+             String query =    " select distinct * where { "
+                + "<" + identifier + "> a ocd:legge."
+                + "<" + identifier + "> dc:title ?nomeAtto."
+                + "?legge a ocd:atto; ocd:rif_leg <" + identifier + ">."
+                + "?legge ocd:lavoriPreparatori [?lavoro <"+ identifier + ">]}";
+
+
+
+            String urlstring = null;
+            try {
+                urlstring = URLEncoder.encode(query, "utf-8");
+                String eee = url_pre + query + url_pos;
+                Log.i("AAA", eee);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            json = jParser.getJSONFromUrl(url_pre + query + url_pos);
+
+
+            try {
+
+
+                JSONObject result = json.getJSONObject("results");
+
+                JSONArray bindings = result.getJSONArray("bindings");
+
+                for (int i = 0; i < bindings.length(); i++) {
+
+                    try {
+
+                        JSONObject atto = bindings.getJSONObject(i).getJSONObject("atto");
+
+
+                        String attovalue = atto.getString("value");
+                        HashMap<String,String> map = new HashMap<String, String>();
+
+                        // Add child node to HashMap key & value
+                        map.put("attoValue", attovalue);
+
+                        jsonlist.add(map);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
         }
     }
 }

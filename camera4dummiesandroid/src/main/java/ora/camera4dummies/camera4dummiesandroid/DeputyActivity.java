@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nineoldandroids.view.animation.AnimatorProxy;
@@ -31,6 +32,8 @@ public class DeputyActivity extends Activity {
     public static final String SAVED_STATE_ACTION_BAR_HIDDEN = "saved_state_action_bar_hidden";
 
     private SlidingUpPanelLayout mLayout;
+
+    private ProgressBar pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,7 @@ public class DeputyActivity extends Activity {
             }
         });
 
-
+        pd = (ProgressBar)findViewById(R.id.progressBar);
 
         TextView t = (TextView) findViewById(R.id.name);
         String name = getIntent().getExtras().getString("name");
@@ -140,7 +143,7 @@ public class DeputyActivity extends Activity {
         protected void onPreExecute() {
             // TODO Auto-generated method stub
             super.onPreExecute();
-          //  pd.show();
+            pd.setVisibility(View.VISIBLE);
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -159,7 +162,7 @@ public class DeputyActivity extends Activity {
         @Override
         protected void onPostExecute(Bitmap result) {
             super.onPostExecute(result);
-          //  pd.dismiss();
+            pd.setVisibility(View.GONE);
             bmImage.setImageBitmap(result);
         }
     }

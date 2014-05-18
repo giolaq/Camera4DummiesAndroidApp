@@ -2,10 +2,10 @@
 <merger>
 
     <dataSet config="main" >
-        <source path="C:\Users\Aristotile\Documents\GitHub\Camera4DummiesAndroidApp\library\assets" />
+        <source path="/Users/joaobiriba/Documents/Projects/Camera4Dummies/library/assets" />
     </dataSet>
     <dataSet config="debug" >
-        <source path="C:\Users\Aristotile\Documents\GitHub\Camera4DummiesAndroidApp\library\src\debug\assets" />
+        <source path="/Users/joaobiriba/Documents/Projects/Camera4Dummies/library/src/debug/assets" />
     </dataSet>
 
 </merger>

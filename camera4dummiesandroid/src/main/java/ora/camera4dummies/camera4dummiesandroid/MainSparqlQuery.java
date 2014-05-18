@@ -21,12 +21,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainSparqlQuery extends ListFragment {
     private Context context;
-    private static String url = "http://docs.blackberry.com/sampledata.json";
+    //  private static String url = "http://docs.blackberry.com/sampledata.json";
+
+    private static String url_pre = "http://dati.camera.it/sparql?default-graph-uri=&query=";
+    private static String url_pos = "&format=application%2Fjson&timeout=0&debug=on&callback=JSON_CALLBACK";
+
+    private static String sqlCollegio;
 
     private static final String VTYPE = "vehicleType";
     private static final String VCOLOR = "vehicleColor";
@@ -35,7 +42,7 @@ public class MainSparqlQuery extends ListFragment {
 
     ArrayList<HashMap<String, String>> jsonlist = new ArrayList<HashMap<String, String>>();
 
-    ListView lv ;
+    ListView lv;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,7 +77,6 @@ public class MainSparqlQuery extends ListFragment {
         }
 
 
-
         private Context context;
 
         protected void onPreExecute() {
@@ -83,11 +89,10 @@ public class MainSparqlQuery extends ListFragment {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-           ListAdapter adapter = new SimpleAdapter(context, jsonlist,
-                    R.layout.list_item, new String[] { VTYPE, VCOLOR,
-                    FUEL, TREAD }, new int[] {
-                    R.id.vehicleType, R.id.vehicleColor, R.id.fuel,
-                    R.id.treadType });
+            ListAdapter adapter = new SimpleAdapter(context, jsonlist,
+                    R.layout.list_item, new String[]{"collegioValue", "countValue"}, new int[]{
+                    R.id.vehicleType, R.id.vehicleColor}
+            );
 
             setListAdapter(adapter);
 
@@ -98,33 +103,56 @@ public class MainSparqlQuery extends ListFragment {
         protected Boolean doInBackground(final String... args) {
 
             JSONParser jParser = new JSONParser();
-
             // get JSON data from URL
-            JSONArray json = jParser.getJSONFromUrl(url);
+            JSONObject json = null;
+            try {
+                 String sqlCollegio = URLEncoder.encode(
+                        "select count(distinct ?deputato) as ?count ?collegio where " +
+                                "{ ?deputato a ocd:deputato; ocd:rif_leg <http://dati.camera.it/ocd/legislatura.rdf/repubblica_17>;" +
+                                " ocd:rif_mandatoCamera ?mandato . ?mandato ocd:rif_elezione ?elezione . ?elezione dc:coverage ?collegio . FILTER NOT EXISTS" +
+                                "{ ?mandato ocd:endDate ?date } } group by ?collegio", "utf-8");
 
-            for (int i = 0; i < json.length(); i++) {
-
-                try {
-                    JSONObject c = json.getJSONObject(i);
-                    String vtype = c.getString(VTYPE);
-
-                    String vcolor = c.getString(VCOLOR);
-                    String vfuel = c.getString(FUEL);
-                    String vtread = c.getString(TREAD);
-
-                    HashMap<String, String> map = new HashMap<String, String>();
-
-                    // Add child node to HashMap key & value
-                    map.put(VTYPE, vtype);
-                    map.put(VCOLOR, vcolor);
-                    map.put(FUEL, vfuel);
-                    map.put(TREAD, vtread);
-                    jsonlist.add(map);
-                }
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                json = jParser.getJSONFromUrl(url_pre + sqlCollegio + url_pos);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
+
+            try {
+
+
+
+                JSONObject result = json.getJSONObject("results");
+
+                JSONArray bindings = result.getJSONArray("bindings");
+
+                for (int i = 0; i < bindings.length(); i++) {
+
+                    try {
+
+                        JSONObject collegio = bindings.getJSONObject(i).getJSONObject("collegio");
+                        JSONObject count = bindings.getJSONObject(i).getJSONObject("count");
+
+
+
+                        String collegioValue = collegio.getString("value");
+                        String countValue = count.getString("value");
+
+                        HashMap<String, String> map = new HashMap<String, String>();
+
+                        // Add child node to HashMap key & value
+                        map.put("collegioValue", collegioValue);
+                        map.put("countValue", countValue);
+
+                        jsonlist.add(map);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
             return null;
         }
     }

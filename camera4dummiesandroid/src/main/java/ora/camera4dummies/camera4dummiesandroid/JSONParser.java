@@ -13,8 +13,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,13 +24,13 @@ import java.io.InputStreamReader;
 public class JSONParser {
 
     static InputStream iStream = null;
-    static JSONArray jarray = null;
+    static JSONObject jarray = null;
     static String json = "";
 
     public JSONParser() {
     }
 
-    public JSONArray getJSONFromUrl(String url) {
+    public JSONObject getJSONFromUrl(String url) {
 
         StringBuilder builder = new StringBuilder();
         HttpClient client = new DefaultHttpClient();
@@ -47,6 +47,8 @@ public class JSONParser {
                 while ((line = reader.readLine()) != null) {
                     builder.append(line);
                 }
+                builder.setLength(builder.length()-1);
+                builder.delete(0,14);
             } else {
                 Log.e("==>", "Failed to download file");
             }
@@ -58,7 +60,7 @@ public class JSONParser {
 
         // Parse String to JSON object
         try {
-            jarray = new JSONArray( builder.toString());
+            jarray = new JSONObject( builder.toString());
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }

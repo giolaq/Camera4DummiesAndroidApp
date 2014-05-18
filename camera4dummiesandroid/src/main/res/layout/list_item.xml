@@ -6,6 +6,8 @@
 
     <TextView
         android:id="@+id/vehicleType"
+        android:textStyle="bold"
+        android:textSize="23dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="vehicleType" />
@@ -16,16 +18,5 @@
         android:layout_height="wrap_content"
         android:text="vehicleColor" />
 
-    <TextView
-        android:id="@+id/fuel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="fuel" />
-
-    <TextView
-        android:id="@+id/treadType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="treadType" />
 </LinearLayout>
 

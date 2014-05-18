@@ -43,6 +43,15 @@ public class LeftAndRightActivity extends BaseActivity {
                 .replace(R.id.menu_frame, new MapFragment())
                 .commit();
 
+        /*
+          getSlidingMenu().setMenu(R.layout.interactive_map_fragment);
+        getSlidingMenu().setShadowDrawable(R.drawable.shadowleft);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.interactiveMapFragment, new ItalianInteractiveMap())
+                .commit();
+
+         */
 
     }
 

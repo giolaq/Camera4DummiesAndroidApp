@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -44,6 +46,7 @@ public class SecondarySparqlQuery extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sparqlsecondquerylayout);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         new ProgressTask(this).execute();
@@ -75,7 +78,7 @@ public class SecondarySparqlQuery extends ListActivity {
         private Context context;
 
         protected void onPreExecute() {
-            this.dialog.setMessage("Progress start");
+            this.dialog.setMessage("Loading data");
             this.dialog.show();
         }
 
@@ -167,6 +170,16 @@ public class SecondarySparqlQuery extends ListActivity {
         startActivity(intent);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
 
 

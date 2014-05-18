@@ -82,7 +82,7 @@ public class MainSparqlQuery extends ListFragment {
         private Context context;
 
         protected void onPreExecute() {
-            this.dialog.setMessage("Progress start");
+            this.dialog.setMessage("Loading data");
             this.dialog.show();
         }
 

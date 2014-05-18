@@ -8,7 +8,6 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -162,11 +161,17 @@ public class SecondarySparqlQuery extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String selectedFromList = ((HashMap<String, String>) lv.getItemAtPosition(position)).get("img");
+        String name =  ((HashMap<String, String>) lv.getItemAtPosition(position)).get("collegioValue");
+        String surname =  ((HashMap<String, String>) lv.getItemAtPosition(position)).get("countValue");
 
-        Intent intent = new Intent();
-        intent.setAction(android.content.Intent.ACTION_VIEW);
+        Intent intent = new Intent(this, DeputyActivity.class);
+       /* intent.setAction(android.content.Intent.ACTION_VIEW);
         intent.addCategory(android.content.Intent.CATEGORY_DEFAULT);
-        intent.setDataAndType(Uri.parse(selectedFromList), "image/*");
+        intent.setDataAndType(Uri.parse(selectedFromList), "image/*");*/
+        intent.putExtra("img", selectedFromList);
+        intent.putExtra("name", name);
+        intent.putExtra("surname", surname);
+
         startActivity(intent);
     }
 
